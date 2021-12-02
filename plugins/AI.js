@@ -7,7 +7,7 @@ to bring new ai
 */
 
 
-const Asena = require('../events');
+const Aivi = require('../events');
 const ffmpeg = require('fluent-ffmpeg');
 const fs = require('fs');
 const https = require('https');
@@ -31,16 +31,7 @@ let baseURI = '/apps/' + conf.HEROKU.APP_NAME;
 let wk = conf.WORKTYPE == 'public' ? false : true
 var vtalk_dsc = ''
 var reply_eva = ''
-if (conf.LANG == 'TR') vtalk_dsc = 'Eva sesli sohbetini başlatır.', reply_eva = '*Herhangi Bir Sesli Mesaja Yanıt Verin!*'
-if (conf.LANG == 'EN') vtalk_dsc = 'Starts to pinky voice chat.', reply_eva = '*Reply to Any Voice Message!*'
-if (conf.LANG == 'AZ') vtalk_dsc = 'Eva səsli söhbətinə başlayır.', reply_eva = '*Hər hansı bir səsli mesaja cavab verin!*'
-if (conf.LANG == 'PT') vtalk_dsc = 'Começa o bate-papo por voz de Eva.', reply_eva = '*Responder a qualquer mensagem de voz!*'
-if (conf.LANG == 'RU') vtalk_dsc = 'Запускает голосовой чат Eva.', reply_eva = '*Ответьте на любое голосовое сообщение!*'
-if (conf.LANG == 'HI') vtalk_dsc = 'Eva ध्वनि चैट प्रारंभ करता है', reply_eva = '*किसी भी ध्वनि संदेश का उत्तर दें!*'
-if (conf.LANG == 'ES') vtalk_dsc = 'Comienza con el chat de voz de Eva.', reply_eva = '*¡Responde a cualquier mensaje de voz!*'
-if (conf.LANG == 'ML') vtalk_dsc = 'വോയ്‌സ് ചാറ്റിലേക്ക് ആരംഭിക്കുന്നു.', reply_eva = '*ഏത് വോയ്‌സ് സന്ദേശത്തിനും മറുപടി നൽകുക!*'
-if (conf.LANG == 'ID') vtalk_dsc = 'Mulai obrolan suara Eva.', reply_eva = '*Balas Pesan Suara Apapun!*'
-
+if (conf.LANG == 'EN') vtalk_dsc = 'Starts to Aivi voice chat.', reply_eva = '*Reply to Any Voice Message!*'
 const recognizeAudio = () => {
     const headers = new Headers({
         'Content-Type': 'audio/wav',
@@ -64,8 +55,8 @@ const convertToWav = file => {
         .save('output.wav')
 }
 
-Asena.addCommand({on: 'text', fromMe: wk, dontAddCommandList: true, deleteCommand: false}, (async (message, match) => {
-    if (message.message.startsWith('pinky') && conf.TALKING_PINKY !== 'true') {        
+Aivi.addCommand({on: 'text', fromMe: wk, dontAddCommandList: true, deleteCommand: false}, (async (message, match) => {
+    if (message.message.startsWith('aivi') && conf.TALKING_AIVI !== 'true') {        
         var unique_ident = message.client.user.jid.split('@')[0]      
         let acc = os.userInfo().homedir.split('Whats')[1].split('Duplicated/')[0] == 'Asena' ? '7d57838203msh0c5cf65c90a7231p13b461jsn77c8cfa55871' : '7d57838203msh0c582jak19865261js1229n77c8cfa55871'
         let aitalk_mode = message.message.includes('{normal}') ? 'raw' : 'waifu'
@@ -93,8 +84,8 @@ Asena.addCommand({on: 'text', fromMe: wk, dontAddCommandList: true, deleteComman
         })
     }
 }));
-Asena.addCommand({on: 'text', fromMe: false, deleteCommand: false}, (async (message, match) => {
-        if (conf.TALKING_PINKY == 'true' && ((!message.jid.includes('-')) || (message.jid.includes('-') && 
+Aivi.addCommand({on: 'text', fromMe: false, deleteCommand: false}, (async (message, match) => {
+        if (conf.TALKING_AIVI == 'true' && ((!message.jid.includes('-')) || (message.jid.includes('-') && 
             (( message.mention !== false && message.mention.length !== 0 ) || message.reply_message !== false)))) {
             if (message.jid.includes('-') && (message.mention !== false && message.mention.length !== 0)) {
                 message.mention.map(async (jid) => {
@@ -182,7 +173,7 @@ Asena.addCommand({on: 'text', fromMe: false, deleteCommand: false}, (async (mess
         }
 
 }));
-Asena.addCommand({ pattern: 'vtalk$', desc: vtalk_dsc,dontAddCommandList: true, fromMe: wk }, (async (message, match) => {
+Aivi.addCommand({ pattern: 'vtalk$', desc: vtalk_dsc,dontAddCommandList: true, fromMe: wk }, (async (message, match) => {
     if (!message.reply_message) return await message.client.sendMessage(message.jid,reply_eva, MessageType.text, { quoted: message.data }) 
     try {
         const file = await message.client.downloadAndSaveMediaMessage({
@@ -236,51 +227,37 @@ var already_on = ''
 var already_off = ''
 var succ_on = ''
 var succ_off = ''
-if (conf.LANG == 'TR') {
-    fulleva_dsc = 'Tam fonksiyonel pinky özelliklerini aktif eder. Hesabınızı bir chatbota dönüştürün!'
-    already_on = 'pinky yapay zekası halihazırda tüm fonksiyonları etkin.'
-    already_off = 'pinky yapay zekası halihazırda yarı fonksiyonel çalışıyor.'
-    succ_on = 'pinky, Tam Fonksiyonel Olarak Açıldı! Lütfen Biraz Bekleyin! ✅'
-    succ_off = 'pinky, Yarı Fonksiyonel Olarak Ayarlandı! Lütfen Biraz Bekleyin! ☑️'
-}
 if (conf.LANG == 'EN') {
-    fulleva_dsc = 'Activates full functional Pinky features. Turn your account into a ai chatbot!'
-    already_on = 'Pinky artificial intelligence is already fully functional.'
-    already_off = 'Pinky artificial intelligence is currently running semi-functional.'
-    succ_on = 'Pinky Opened Fully Functionally! Please wait a bit! ✅'
-    succ_off = 'Pinky Set to Semi-Functional! Please wait a bit! ☑️'
-}
-if (conf.LANG == 'ML') {
-    fulleva_dsc = 'പൂർണ്ണമായും പ്രവർത്തനക്ഷമമായ pinky സവിശേഷതകൾ സജീവമാക്കുന്നു. നിങ്ങളുടെ അക്കൗണ്ട് ഒരു ചാറ്റ്ബോട്ടാക്കി മാറ്റുക!'
-    already_on = 'pinky കൃത്രിമബുദ്ധി ഇതിനകം പൂർണ്ണമായി പ്രവർത്തിക്കുന്നു.'
-    already_off = 'pinky AI നിലവിൽ സെമി-ഫംഗ്ഷണൽ ആണ്.'
-    succ_on = 'pinky പൂർണ്ണമായും പ്രവർത്തനക്ഷമമായി തുറന്നു! കുറച്ച് കാത്തിരിക്കൂ! ✅'
-    succ_off = 'സെമി-ഫങ്ഷണൽ ആയി pinky സജ്ജമാക്കുക! കുറച്ച് കാത്തിരിക്കൂ! ☑️'
+    fulleva_dsc = 'Activates full functional Aivi features. Turn your account into a AI chatbot!'
+    already_on = 'Aivi artificial intelligence is already fully functional.'
+    already_off = 'Aivi artificial intelligence is currently running semi-functional.'
+    succ_on = 'Aivi Opened Fully Functionally! Please wait a bit! ✅'
+    succ_off = 'Aivi Set to Semi-Functional! Please wait a bit! ☑️'
 }
 
-Asena.addCommand({ pattern: 'pinky ?(.*)', desc: fulleva_dsc, fromMe: true,dontAddCommandList: true, usage: '.pinky on / off' }, (async (message, match) => {
-    var pinky_status = `${conf.TALKING_PINKY}`
+Aivi.addCommand({ pattern: 'aivi ?(.*)', desc: fulleva_dsc, fromMe: true,dontAddCommandList: true, usage: '.aivi on / off' }, (async (message, match) => {
+    var pinky_status = `${conf.TALKING_AIVI}`
     if (match[1] == 'on') {
-        if (pinky_status == 'true') {
+        if (aivi_status == 'true') {
             return await message.client.sendMessage(message.jid, '*' + already_on + '*', MessageType.text)
         }
         else {
             await heroku.patch(baseURI + '/config-vars', { 
                 body: { 
-                    ['TALKING_PINKY']: 'true'
+                    ['TALKING_AIVI']: 'true'
                 } 
             });
             await message.client.sendMessage(message.jid, '*' + succ_on + '*', MessageType.text)
         }
     }
     else if (match[1] == 'off') {
-        if (pinky_status !== 'true') {
+        if (aivi_status !== 'true') {
             return await message.client.sendMessage(message.jid, '*' + already_off + '*', MessageType.text)
         }
         else {
             await heroku.patch(baseURI + '/config-vars', { 
                 body: { 
-                    ['TALKING_PINKY']: 'false'
+                    ['TALKING_AIVI']: 'false'
                 } 
             });
             await message.client.sendMessage(message.jid, '*' + succ_off + '*', MessageType.text)
